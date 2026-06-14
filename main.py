@@ -75,8 +75,9 @@ def grade_exam(submission: ExamSubmission):
     # Send the data to your Google Apps Script securely
     try:
         if GOOGLE_SHEET_URL != "https://script.google.com/macros/s/AKfycbxO0dpsIvdHp-OZ8zF6g1FcTBSRzH4DEhrxjaUDUQvl4b6-DFhoymMRYllJXmIgWMTH/exec":
-          response = requests.post(GOOGLE_SHEET_URL, json=data)
+           response = requests.post(GOOGLE_SHEET_URL, json=data)
 print(f"DEBUG: Google responded with: {response.status_code} - {response.text}")
+return {"status": "success"}             
 
 if response.status_code == 200:
     return {"status": "success"}
