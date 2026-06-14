@@ -16,10 +16,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-with open("questions_db.json", "r") as file:
+with open("Bio 101 questions_db.json", "r") as file:
     QUESTIONS_DB = json.load(file)
 
 class ExamSubmission(BaseModel):
+    
     name: str
     matric: str
     dept: str
@@ -27,7 +28,7 @@ class ExamSubmission(BaseModel):
 
 # ── YOUR DATABASE CONFIGURATION ──
 # Erase the placeholder string below and paste your exact Google Web App URL inside the quotes.
-GOOGLE_SHEET_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE"
+GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxO0dpsIvdHp-OZ8zF6g1FcTBSRzH4DEhrxjaUDUQvl4b6-DFhoymMRYllJXmIgWMTH/exec"
 
 @app.get("/api/questions")
 def get_secure_questions():
