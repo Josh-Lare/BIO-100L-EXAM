@@ -490,7 +490,7 @@ async function startExam() {
   btn.textContent = 'Connecting to Secure Server...';
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/questions');
+    const response = await fetch('https://bio-100l-exam.onrender.com/api/questions');
     QUESTIONS = await response.json();
     
     answers = new Array(QUESTIONS.length).fill(null);
@@ -597,7 +597,7 @@ async function submitExam() {
   };
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/submit', {
+    const response = await fetch('https://bio-100l-exam.onrender.com/api/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
