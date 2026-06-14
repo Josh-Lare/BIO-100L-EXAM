@@ -6,6 +6,14 @@ import json
 import requests  # NEW: This library allows Python to talk to Google
 from datetime import datetime
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"], 
+    allow_headers=["*"], 
+)
+
 app = FastAPI()
 
 app.add_middleware(
