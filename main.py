@@ -89,4 +89,4 @@ def grade_exam(submission: ExamSubmission):
 
 @app.get("/")
 def serve_frontend():
-    return FileResponse("index.html")
+    return FileResponse("public_exam.html")
