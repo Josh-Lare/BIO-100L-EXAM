@@ -1,6 +1,5 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
@@ -73,23 +72,21 @@ def grade_exam(submission: ExamSubmission):
         "grade": grade
     }
 
-    # ── FIXED: try block was missing, variable name was wrong ──
     try:
-        response = requests.post(GOOGLE_SHEET_URL, json=payload)  # was: json=data
+        response = requests.post(GOOGLE_SHEET_URL, json=payload)
         print(f"DEBUG: Google responded with: {response.status_code} - {response.text}")
     except Exception as e:
         print(f"Failed to save to Google Sheets: {e}")
 
-    # ── Always return the result to the student regardless ──
     return {
         "student": submission.name,
         "matric": submission.matric,
         "score": correct,
         "percentage": pct,
         "grade": grade,
-
-        @app.get("/")
-def serve_frontend():
-    return FileResponse("index.html")
         "stats": {"correct": correct, "wrong": wrong, "skipped": skipped}
     }
+
+@app.get("/")
+def serve_frontend():
+    return FileResponse("index.html")
