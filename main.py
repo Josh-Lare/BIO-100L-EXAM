@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 import json
-import requests  # NEW: This library allows Python to talk to Google
+import requests
 from datetime import datetime
 
 app = FastAPI()
@@ -20,14 +20,11 @@ with open("Bio 101 questions_db.json", "r") as file:
     QUESTIONS_DB = json.load(file)
 
 class ExamSubmission(BaseModel):
-    
     name: str
     matric: str
     dept: str
     answers: List[Optional[str]]
 
-# ── YOUR DATABASE CONFIGURATION ──
-# Erase the placeholder string below and paste your exact Google Web App URL inside the quotes.
 GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxO0dpsIvdHp-OZ8zF6g1FcTBSRzH4DEhrxjaUDUQvl4b6-DFhoymMRYllJXmIgWMTH/exec"
 
 @app.get("/api/questions")
@@ -43,25 +40,27 @@ def grade_exam(submission: ExamSubmission):
     correct = 0
     wrong = 0
     skipped = 0
-    
+
     for i, user_answer in enumerate(submission.answers):
         actual_answer = QUESTIONS_DB[i]["ans"]
-        if user_answer is None: skipped += 1
-        elif user_answer == actual_answer: correct += 1
-        else: wrong += 1
-            
+        if user_answer is None:
+            skipped += 1
+        elif user_answer == actual_answer:
+            correct += 1
+        else:
+            wrong += 1
+
     total_questions = len(QUESTIONS_DB)
     pct = round((correct / total_questions) * 100)
-    
+
     if pct >= 70: grade = 'First Class (A)'
     elif pct >= 60: grade = 'Second Class Upper (B)'
     elif pct >= 50: grade = 'Second Class Lower (C)'
     elif pct >= 45: grade = 'Third Class (D)'
     else: grade = 'Fail (F)'
 
-    # ── NEW: GOOGLE SHEETS CLOUD RECORDING LOGIC ──
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
+
     payload = {
         "timestamp": current_time,
         "name": submission.name,
@@ -71,20 +70,15 @@ def grade_exam(submission: ExamSubmission):
         "percentage": f"{pct}%",
         "grade": grade
     }
-    
-    # Send the data to your Google Apps Script securely
-    response = requests.post(GOOGLE_SHEET_URL, json=data)
-print(f"DEBUG: Google responded with: {response.status_code} - {response.text}")
-return {"status": "success"}      
 
-if response.status_code == 200:
-    return {"status": "success"}
-else:
-    return {"status": "error", "message": response.text}
+    # ── FIXED: try block was missing, variable name was wrong ──
+    try:
+        response = requests.post(GOOGLE_SHEET_URL, json=payload)  # was: json=data
+        print(f"DEBUG: Google responded with: {response.status_code} - {response.text}")
     except Exception as e:
         print(f"Failed to save to Google Sheets: {e}")
-    # ──────────────────────────────────────────────
 
+    # ── Always return the result to the student regardless ──
     return {
         "student": submission.name,
         "matric": submission.matric,
