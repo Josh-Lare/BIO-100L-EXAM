@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
 import json
@@ -85,5 +87,9 @@ def grade_exam(submission: ExamSubmission):
         "score": correct,
         "percentage": pct,
         "grade": grade,
+
+        @app.get("/")
+def serve_frontend():
+    return FileResponse("index.html")
         "stats": {"correct": correct, "wrong": wrong, "skipped": skipped}
     }
